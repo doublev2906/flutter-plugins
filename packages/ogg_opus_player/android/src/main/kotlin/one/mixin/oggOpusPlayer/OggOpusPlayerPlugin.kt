@@ -80,7 +80,8 @@ class OggOpusPlayerPlugin : FlutterPlugin, MethodCallHandler {
                 result.success(null)
             }
             "createRecorder" -> {
-                val path = call.arguments as String
+                val args = call.arguments as Map<*, *>
+                val path = args["path"] as String
                 val id = generatePlayerId()
                 val recorder =
                     OpusAudioRecorder(context, File(path), object : OpusAudioRecorder.Callback {
