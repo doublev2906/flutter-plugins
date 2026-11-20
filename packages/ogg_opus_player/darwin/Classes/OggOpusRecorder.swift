@@ -453,7 +453,9 @@ extension OggOpusRecorder {
     pcmData.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) in
       let samples = ptr.bindMemory(to: Int16.self)
       for i in 0 ..< numberOfSamples {
-        let sample = abs(samples.baseAddress!.advanced(by: i).pointee)
+        let raw = samples.baseAddress!.advanced(by: i).pointee
+        // abs(Int16.min) overflows and traps; a clipped mic sample is exactly Int16.min.
+        let sample = raw == .min ? Int16.max : abs(raw)
         waveformPeak = max(waveformPeak, sample)
         waveformPeakCount += 1
         if waveformPeakCount >= waveformPeakSampleScope {
